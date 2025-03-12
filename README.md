@@ -65,6 +65,7 @@ git clone https://github.com/sofiane-wattiez/docx-template-filler-python.git
 2. **Script Execution / Exécutez le script :**
 
 **In the directory of the project execute script like this:**
+
 **Dans le répertoire du projet, exécutez le script Python :**
 
 ```bash
