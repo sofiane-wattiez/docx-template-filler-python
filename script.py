@@ -67,8 +67,8 @@ def generate_documents(data):
             "{nom}": data["nom"],
             "{prenom}": data["prenom"],
             "{date}": data["date"],  # La date actuelle
-            "{marque}": data["marque"],
-            "{modele}": data["modele"],
+            "{old_marque}": data["old_marque"],  # Ajout de l'ancienne marque
+            "{old_modele}": data["old_modele"],  # Ajout de l'ancien modèle
             "{old_numero_identification}": data["old_numero_identification"],
             "{old_numero_de_serie}": data["old_numero_de_serie"],
         }
@@ -89,6 +89,8 @@ def submit_form():
         "new_numero_de_serie": entry_new_sn.get(),
         "old_numero_identification": entry_old_id.get() if entry_old_id.get() else "0",
         "old_numero_de_serie": entry_old_sn.get() if entry_old_sn.get() else "0",
+        "old_marque": entry_old_marque.get() if entry_old_marque.get() else "0",  # Ancienne marque
+        "old_modele": entry_old_modele.get()  if entry_old_modele.get() else "0",  # Ancien modèle
     }
     generate_documents(data)
     messagebox.showinfo("Succès", "Documents générés avec succès !")
@@ -107,11 +109,13 @@ default_values = {
     "New ID": "SL",
     "New S/N": "PT/PC-12345",
     "Old ID": "SL",
-    "Old S/N": "PT/PC-67890"
+    "Old S/N": "PT/PC-67890",
+    "Old Marque": "Dell",  # Nouveau champ
+    "Old Modèle": "Inspiron"  # Nouveau champ
 }
 
-# Obtenez la date du jour et formatez-la sous forme "YYYY-MM-DD"
-today_date = datetime.datetime.now().strftime("%Y-%m-%d")
+# Obtenez la date du jour et formatez-la sous forme "Day-Month-Year"
+today_date = datetime.datetime.now().strftime("%d-%m-%Y")
 
 # Liste pour stocker les entrées
 entries = []
@@ -136,7 +140,7 @@ for field in default_values:
     entries.append(entry)  # Ajouter l'entry dans la liste
 
 # Affecter les champs d'entrée à des variables
-entry_nom, entry_prenom, entry_date, entry_marque, entry_modele, entry_new_id, entry_new_sn, entry_old_id, entry_old_sn = entries
+entry_nom, entry_prenom, entry_date, entry_marque, entry_modele, entry_new_id, entry_new_sn, entry_old_id, entry_old_sn, entry_old_marque, entry_old_modele = entries
 
 # Bouton pour générer les documents
 generate_button = tk.Button(root, text="Générer Documents", command=submit_form)
