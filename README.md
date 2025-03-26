@@ -77,15 +77,17 @@ python script.py
 **Lorsque vous lancez le script, une interface graphique (GUI) s'ouvrira. Vous devrez remplir les champs suivants:**
 
 ```bash
-Name
-Surname
-Date (date of day)
-Brand
-Modele
-New ID
-New S/N
-Old ID (facultatif) # If Value is 0 or null the 2nd docx don't be created
-Old S/N (facultatif) # If Value is 0 or null the 2nd docx don't be created
+nom
+prenom
+date
+marque
+modele
+new_numero_identification
+new_numero_de_serie
+old_numero_identification # If Value is 0 or null the 2nd docx don't be created
+old_numero_de_serie # If Value is 0 or null the 2nd docx don't be created
+old_marque # If Value is 0 or null the 2nd docx don't be created
+old_modele # If Value is 0 or null the 2nd docx don't be created
 ```
 
 ## Result 
