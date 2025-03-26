@@ -91,10 +91,9 @@ Old S/N (facultatif) # If Value is 0 or null the 2nd docx don't be created
 ## Result 
 ```bash
 Document_MI_John_Doe/
-├── Document_Remise/
-│   └── Document_Remise_MI_John_Doe_SL_PT_12345.docx
-└── Document_Restitution/
-    └── Document_Restitution_MI_John_Doe_SL_PT_67890.docx
+
+├── Document_Remise_MI_John_Doe_SL_PT_12345.docx
+└── Document_Restitution_MI_John_Doe_SL_PT_67890.docx
 ```
 
 ## Author : Sofiane Wattiez
