@@ -60,7 +60,7 @@ def generate_documents(data):
     
     # Document de restitution, si applicable
     if data.get("old_numero_identification") and data.get("old_numero_de_serie") and data["old_numero_identification"] != "0" and data["old_numero_de_serie"] != "0":
-        restitution_folder = os.path.join(output_dir, "Document_Restitution")
+        # restitution_folder = os.path.join(output_dir, "Document_Restitution")
         # if not os.path.exists(restitution_folder):
         #     os.makedirs(restitution_folder)
 
