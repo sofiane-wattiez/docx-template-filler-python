@@ -1,3 +1,4 @@
+
 from docx import Document
 import tkinter as tk
 from tkinter import messagebox
@@ -37,8 +38,15 @@ def generate_documents(data):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Nom du fichier de sortie pour le document de remise, enregistré directement dans le dossier principal
-    remise_output = os.path.join(output_dir, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
+    # Créer les sous-dossiers pour les documents (Document_Remise, Document_Restitution)
+    # remise_folder = os.path.join(output_dir, "Document_Remise")
+    # if not os.path.exists(remise_folder):
+    #     os.makedirs(remise_folder)
+
+    # Nom du fichier de sortie pour le document de remise
+    # remise_output = os.path.join(remise_folder, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
+    remise_output = os.path.join( main_folder_name, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
+
     remise_replacements = {
         "{nom}": data["nom"],
         "{prenom}": data["prenom"],
@@ -53,7 +61,13 @@ def generate_documents(data):
     
     # Document de restitution, si applicable
     if data.get("old_numero_identification") and data.get("old_numero_de_serie") and data["old_numero_identification"] != "0" and data["old_numero_de_serie"] != "0":
-        restitution_output = os.path.join(output_dir, f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
+        restitution_folder = os.path.join(output_dir, "Document_Restitution")
+        # if not os.path.exists(restitution_folder):
+        #     os.makedirs(restitution_folder)
+
+        
+        # restitution_output = os.path.join(restitution_folder, f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
+        restitution_output = os.path.join( main_folder_name,f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
         restitution_replacements = {
             "{nom}": data["nom"],
             "{prenom}": data["prenom"],
@@ -88,7 +102,7 @@ def submit_form():
 
 # Interface graphique
 root = tk.Tk()
-root.title("Générateur de documents SERAMM")
+root.title("Générateur de documents")
 
 # Valeurs par défaut pour les champs
 default_values = {
@@ -98,11 +112,11 @@ default_values = {
     "Marque": "HP",
     "Modèle": "ELITEBOOK",
     "New ID": "SL-",
-    "New S/N": "PT/PC-12345",
+    "New S/N": "PT-PC-12345",
     "Old ID": "SL-",
-    "Old S/N": "PT/PC-67890",
-    "Old Marque": "Lenovo",  # Nouveau champ
-    "Old Modèle": "Thinkpad"  # Nouveau champ
+    "Old S/N": "PT-PC-67890",
+    "Old Marque": "LENOVO",  # Nouveau champ
+    "Old Modèle": "THINKPAD T470"  # Nouveau champ
 }
 
 # Obtenez la date du jour et formatez-la sous forme "Day-Month-Year"
@@ -141,4 +155,4 @@ root.mainloop()
 
 # Author: Sofiane Wattiez
 # Date: 12.03.2025 
-# Description: This script Automate generate 2 wordx documents
+# Description: This script Automate generate 2 wordx documents based on templates and user input.
