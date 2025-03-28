@@ -11,11 +11,14 @@ def replace_text_in_doc(template_path, output_path, replacements):
         os.makedirs(output_dir)
 
     doc = Document(template_path)
+    
+    # Remplacer le texte dans les paragraphes
     for para in doc.paragraphs:
         for key, value in replacements.items():
             if key in para.text:
                 para.text = para.text.replace(key, value)
     
+    # Remplacer le texte dans les cellules des tables
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -23,11 +26,23 @@ def replace_text_in_doc(template_path, output_path, replacements):
                     if key in cell.text:
                         cell.text = cell.text.replace(key, value)
     
+    # Sauvegarder le document modifié
     doc.save(output_path)
 
 def generate_documents(data):
     remise_template = "template_remise.docx"
     restitution_template = "template_restitution.docx"
+    
+    # Vérification de l'existence des fichiers modèle
+    if not os.path.exists(remise_template):
+        print(f"Le fichier modèle {remise_template} est manquant.")
+        messagebox.showerror("Erreur", f"Le fichier modèle {remise_template} est manquant.")
+        return
+
+    if not os.path.exists(restitution_template):
+        print(f"Le fichier modèle {restitution_template} est manquant.")
+        messagebox.showerror("Erreur", f"Le fichier modèle {restitution_template} est manquant.")
+        return
     
     # Créer le nom du dossier principal basé sur le nom et prénom
     main_folder_name = f"{data['nom']}_{data['prenom']}"
@@ -37,15 +52,9 @@ def generate_documents(data):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Créer les sous-dossiers pour les documents (Document_Remise, Document_Restitution)
-    # remise_folder = os.path.join(output_dir, "Document_Remise")
-    # if not os.path.exists(remise_folder):
-    #     os.makedirs(remise_folder)
-
     # Nom du fichier de sortie pour le document de remise
-    # remise_output = os.path.join(remise_folder, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
-    remise_output = os.path.join( main_folder_name, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
-
+    remise_output = os.path.join(main_folder_name, f"Document_Remise_MI_{data['nom']}_{data['prenom']}_{data['new_numero_identification']}_{data['new_numero_de_serie']}.docx")
+    
     remise_replacements = {
         "{nom}": data["nom"],
         "{prenom}": data["prenom"],
@@ -55,29 +64,33 @@ def generate_documents(data):
         "{new_numero_identification}": data["new_numero_identification"],
         "{new_numero_de_serie}": data["new_numero_de_serie"],
     }
-    replace_text_in_doc(remise_template, remise_output, remise_replacements)
-    print(f"Document généré : {remise_output}")
+    
+    try:
+        replace_text_in_doc(remise_template, remise_output, remise_replacements)
+        print(f"Document généré : {remise_output}")
+    except Exception as e:
+        print(f"Erreur lors de la génération du document de remise : {e}")
+        messagebox.showerror("Erreur", "Erreur lors de la génération du document de remise.")
     
     # Document de restitution, si applicable
-    if data.get("old_numero_identification") and data.get("old_numero_de_serie") and data["old_numero_identification"] != "0" and data["old_numero_de_serie"] != "0":
-        # restitution_folder = os.path.join(output_dir, "Document_Restitution")
-        # if not os.path.exists(restitution_folder):
-        #     os.makedirs(restitution_folder)
-
-        
-        # restitution_output = os.path.join(restitution_folder, f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
-        restitution_output = os.path.join( main_folder_name,f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
+    if all(value is not None for value in [data["old_numero_identification"], data["old_numero_de_serie"], data["old_marque"], data["old_modele"]]):
+        restitution_output = os.path.join(main_folder_name, f"Document_Restitution_MI_{data['nom']}_{data['prenom']}_{data['old_numero_identification']}_{data['old_numero_de_serie']}.docx")
         restitution_replacements = {
             "{nom}": data["nom"],
             "{prenom}": data["prenom"],
             "{date}": data["date"],  # La date actuelle
-            "{old_marque}": data["old_marque"],  # Ajout de l'ancienne marque
-            "{old_modele}": data["old_modele"],  # Ajout de l'ancien modèle
+            "{old_marque}": data["old_marque"],  # Ancienne marque
+            "{old_modele}": data["old_modele"],  # Ancien modèle
             "{old_numero_identification}": data["old_numero_identification"],
             "{old_numero_de_serie}": data["old_numero_de_serie"],
         }
-        replace_text_in_doc(restitution_template, restitution_output, restitution_replacements)
-        print(f"Document généré : {restitution_output}")
+        
+        try:
+            replace_text_in_doc(restitution_template, restitution_output, restitution_replacements)
+            print(f"Document généré : {restitution_output}")
+        except Exception as e:
+            print(f"Erreur lors de la génération du document de restitution : {e}")
+            messagebox.showerror("Erreur", "Erreur lors de la génération du document de restitution.")
     else:
         print("Aucun ancien poste détecté, le document de restitution ne sera pas généré.")
 
@@ -91,10 +104,10 @@ def submit_form():
         "modele": entry_modele.get(),
         "new_numero_identification": entry_new_id.get(),
         "new_numero_de_serie": entry_new_sn.get(),
-        "old_numero_identification": entry_old_id.get() if entry_old_id.get() else "0",
-        "old_numero_de_serie": entry_old_sn.get() if entry_old_sn.get() else "0",
-        "old_marque": entry_old_marque.get() if entry_old_marque.get() else "0",  # Ancienne marque
-        "old_modele": entry_old_modele.get()  if entry_old_modele.get() else "0",  # Ancien modèle
+        "old_numero_identification": entry_old_id.get() if entry_old_id.get().strip() != "" else None,
+        "old_numero_de_serie": entry_old_sn.get() if entry_old_sn.get().strip() != "" else None,
+        "old_marque": entry_old_marque.get() if entry_old_marque.get().strip() != "" else None,  # Ancienne marque
+        "old_modele": entry_old_modele.get() if entry_old_modele.get().strip() != "" else None,  # Ancien modèle
     }
     generate_documents(data)
     messagebox.showinfo("Succès", "Documents générés avec succès !")
@@ -109,13 +122,13 @@ default_values = {
     "Prénom": "Doe",
     "Date": "",  # La date sera remplie automatiquement
     "Marque": "HP",
-    "Modèle": "ELITEBOOK",
-    "New ID": "SL-",
+    "Modèle": "ELITEBOOK - ",
+    "New ID": "SL",
     "New S/N": "PT-PC-12345",
-    "Old ID": "SL-",
+    "Old ID": "SL",
     "Old S/N": "PT-PC-67890",
     "Old Marque": "LENOVO",  # Nouveau champ
-    "Old Modèle": "THINKPAD T470"  # Nouveau champ
+    "Old Modèle": "THINKPAD T"  # Nouveau champ
 }
 
 # Obtenez la date du jour et formatez-la sous forme "Day-Month-Year"
